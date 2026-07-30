@@ -5,10 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Todo</title>
   <link rel="stylesheet" href="style.css" />
+  <script>
+    (function () {
+      var theme = localStorage.getItem("todo-app.theme");
+      if (theme === "dark" || theme === "light") {
+        document.documentElement.setAttribute("data-theme", theme);
+      }
+    })();
+  </script>
 </head>
 <body>
   <main class="app">
-    <h1>Todo</h1>
+    <div class="app-header">
+      <h1>Todo</h1>
+      <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+    </div>
 
     <form id="todo-form" class="todo-form">
       <input

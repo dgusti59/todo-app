@@ -1,4 +1,5 @@
 const STORAGE_KEY = "todo-app.todos";
+const THEME_KEY = "todo-app.theme";
 
 const form = document.getElementById("todo-form");
 const input = document.getElementById("todo-input");
@@ -8,6 +9,7 @@ const errorEl = document.getElementById("todo-error");
 const emptyStateEl = document.getElementById("empty-state");
 const searchInput = document.getElementById("search-input");
 const filtersEl = document.getElementById("filters");
+const themeToggle = document.getElementById("theme-toggle");
 
 let todos = loadTodos();
 let editingId = null;
@@ -28,6 +30,16 @@ function saveTodos() {
 
 function createId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function currentTheme() {
+  return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem(THEME_KEY, theme);
+  themeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
 }
 
 function addTodo(text) {
@@ -177,4 +189,9 @@ filtersEl.addEventListener("click", (event) => {
   render();
 });
 
+themeToggle.addEventListener("click", () => {
+  applyTheme(currentTheme() === "dark" ? "light" : "dark");
+});
+
+applyTheme(currentTheme());
 render();
