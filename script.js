@@ -66,10 +66,11 @@ function deleteTodo(id) {
 
 function editTodo(id, text) {
   const trimmed = text.trim();
-  if (!trimmed) return;
-  const todo = todos.find((t) => t.id === id);
-  if (todo) todo.text = trimmed;
-  saveTodos();
+  if (trimmed) {
+    const todo = todos.find((t) => t.id === id);
+    if (todo) todo.text = trimmed;
+    saveTodos();
+  }
   render();
 }
 
@@ -111,6 +112,9 @@ function importTodos(file) {
       dataMessageEl.textContent = "That file isn't a valid todo export.";
     }
   };
+  reader.onerror = () => {
+    dataMessageEl.textContent = "Couldn't read that file.";
+  };
   reader.readAsText(file);
 }
 
@@ -122,6 +126,18 @@ function visibleTodos() {
       return true;
     })
     .filter((t) => t.text.toLowerCase().includes(search.toLowerCase()));
+}
+
+function createLabelSpan(todo) {
+  const span = document.createElement("span");
+  span.className = "label";
+  span.textContent = todo.text;
+  span.title = "Double-click to edit";
+  span.addEventListener("dblclick", () => {
+    editingId = todo.id;
+    render();
+  });
+  return span;
 }
 
 function render() {
@@ -147,6 +163,7 @@ function render() {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = todo.completed;
+    checkbox.setAttribute("aria-label", `Mark "${todo.text}" as ${todo.completed ? "not done" : "done"}`);
     checkbox.addEventListener("change", () => toggleTodo(todo.id));
 
     let labelEl;
@@ -157,8 +174,9 @@ function render() {
       labelEl.value = todo.text;
       labelEl.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
-          editTodo(todo.id, labelEl.value);
+          const value = labelEl.value;
           editingId = null;
+          editTodo(todo.id, value);
         } else if (event.key === "Escape") {
           editingId = null;
           render();
@@ -166,18 +184,22 @@ function render() {
       });
       labelEl.addEventListener("blur", () => {
         if (editingId !== todo.id) return;
-        editTodo(todo.id, labelEl.value);
         editingId = null;
+        const trimmed = labelEl.value.trim();
+        if (trimmed) {
+          todo.text = trimmed;
+          saveTodos();
+        }
+        // Patch just this row instead of a full render(): a full render()
+        // here would replace every row's DOM node mid-click if the blur was
+        // caused by mousedown on another row's control (e.g. its checkbox),
+        // which silently drops that click since the browser cancels a
+        // control's default action when its node changes between
+        // mousedown and mouseup.
+        labelEl.replaceWith(createLabelSpan(todo));
       });
     } else {
-      labelEl = document.createElement("span");
-      labelEl.className = "label";
-      labelEl.textContent = todo.text;
-      labelEl.title = "Double-click to edit";
-      labelEl.addEventListener("dblclick", () => {
-        editingId = todo.id;
-        render();
-      });
+      labelEl = createLabelSpan(todo);
     }
 
     const deleteBtn = document.createElement("button");
@@ -230,7 +252,9 @@ filtersEl.addEventListener("click", (event) => {
   if (!button) return;
   filter = button.dataset.filter;
   for (const btn of filtersEl.querySelectorAll("button")) {
-    btn.classList.toggle("active", btn === button);
+    const isActive = btn === button;
+    btn.classList.toggle("active", isActive);
+    btn.setAttribute("aria-pressed", String(isActive));
   }
   render();
 });
@@ -253,7 +277,9 @@ list.addEventListener("keydown", (event) => {
 
   if (event.key === "Delete") {
     event.preventDefault();
+    const neighborId = (li.nextElementSibling || li.previousElementSibling)?.dataset.id;
     deleteTodo(li.dataset.id);
+    if (neighborId) list.querySelector(`[data-id="${neighborId}"]`)?.focus();
   } else if (event.key === "ArrowDown") {
     event.preventDefault();
     const next = li.nextElementSibling;

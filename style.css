@@ -7,6 +7,7 @@
   --border-strong: #eaecef;
   --accent: #2563eb;
   --accent-hover: #1d4ed8;
+  --on-accent: #ffffff;
   --danger: #d1242f;
 }
 
@@ -19,11 +20,21 @@
   --border-strong: #21262d;
   --accent: #3b82f6;
   --accent-hover: #60a5fa;
+  --on-accent: #ffffff;
   --danger: #f85149;
 }
 
 * {
   box-sizing: border-box;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
 }
 
 body {
@@ -92,7 +103,7 @@ h1 {
   border: none;
   border-radius: 6px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font-size: 1rem;
   cursor: pointer;
 }

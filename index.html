@@ -22,6 +22,7 @@
     </div>
 
     <form id="todo-form" class="todo-form">
+      <label for="todo-input" class="visually-hidden">New task</label>
       <input
         id="todo-input"
         type="text"
@@ -34,6 +35,7 @@
     <p id="todo-error" class="error" role="alert"></p>
 
     <div class="controls">
+      <label for="search-input" class="visually-hidden">Search tasks</label>
       <input
         id="search-input"
         type="search"
@@ -42,9 +44,9 @@
         autocomplete="off"
       />
       <div class="filters" id="filters">
-        <button type="button" data-filter="all" class="active">All</button>
-        <button type="button" data-filter="active">Active</button>
-        <button type="button" data-filter="completed">Completed</button>
+        <button type="button" data-filter="all" class="active" aria-pressed="true">All</button>
+        <button type="button" data-filter="active" aria-pressed="false">Active</button>
+        <button type="button" data-filter="completed" aria-pressed="false">Completed</button>
       </div>
     </div>
 
