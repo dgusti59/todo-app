@@ -34,6 +34,7 @@ body {
   display: flex;
   justify-content: center;
   padding: 3rem 1rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .app {
@@ -43,6 +44,7 @@ body {
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
+  transition: background-color 0.15s ease;
 }
 
 .app-header {
@@ -240,6 +242,17 @@ h1 {
   cursor: pointer;
 }
 
+.data-actions button:hover,
+.import-label:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.theme-toggle:hover,
+.filters button:hover {
+  border-color: var(--accent);
+}
+
 .data-message {
   margin: 0.5rem 0 0;
   font-size: 0.8rem;
@@ -252,4 +265,19 @@ h1 {
   font-size: 0.75rem;
   color: var(--muted);
   line-height: 1.4;
+}
+
+@media (max-width: 420px) {
+  body {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters {
+    justify-content: center;
+  }
 }
