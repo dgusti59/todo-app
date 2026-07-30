@@ -8,6 +8,7 @@ const errorEl = document.getElementById("todo-error");
 const emptyStateEl = document.getElementById("empty-state");
 
 let todos = loadTodos();
+let editingId = null;
 
 function loadTodos() {
   try {
@@ -44,6 +45,15 @@ function deleteTodo(id) {
   render();
 }
 
+function editTodo(id, text) {
+  const trimmed = text.trim();
+  if (!trimmed) return;
+  const todo = todos.find((t) => t.id === id);
+  if (todo) todo.text = trimmed;
+  saveTodos();
+  render();
+}
+
 function render() {
   list.innerHTML = "";
   emptyStateEl.hidden = todos.length !== 0;
@@ -57,17 +67,49 @@ function render() {
     checkbox.checked = todo.completed;
     checkbox.addEventListener("change", () => toggleTodo(todo.id));
 
-    const label = document.createElement("span");
-    label.className = "label";
-    label.textContent = todo.text;
+    let labelEl;
+    if (editingId === todo.id) {
+      labelEl = document.createElement("input");
+      labelEl.type = "text";
+      labelEl.className = "edit-input";
+      labelEl.value = todo.text;
+      labelEl.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          editTodo(todo.id, labelEl.value);
+          editingId = null;
+        } else if (event.key === "Escape") {
+          editingId = null;
+          render();
+        }
+      });
+      labelEl.addEventListener("blur", () => {
+        if (editingId !== todo.id) return;
+        editTodo(todo.id, labelEl.value);
+        editingId = null;
+      });
+    } else {
+      labelEl = document.createElement("span");
+      labelEl.className = "label";
+      labelEl.textContent = todo.text;
+      labelEl.title = "Double-click to edit";
+      labelEl.addEventListener("dblclick", () => {
+        editingId = todo.id;
+        render();
+      });
+    }
 
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "delete";
     deleteBtn.textContent = "Delete";
     deleteBtn.addEventListener("click", () => deleteTodo(todo.id));
 
-    li.append(checkbox, label, deleteBtn);
+    li.append(checkbox, labelEl, deleteBtn);
     list.appendChild(li);
+
+    if (editingId === todo.id) {
+      labelEl.focus();
+      labelEl.select();
+    }
   }
 
   const remaining = todos.filter((t) => !t.completed).length;

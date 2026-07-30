@@ -98,6 +98,16 @@ h1 {
   color: #8b949e;
 }
 
+.todo-item .edit-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid #2563eb;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
 .todo-item .delete {
   border: none;
   background: none;
