@@ -6,9 +6,13 @@ const list = document.getElementById("todo-list");
 const countEl = document.getElementById("todo-count");
 const errorEl = document.getElementById("todo-error");
 const emptyStateEl = document.getElementById("empty-state");
+const searchInput = document.getElementById("search-input");
+const filtersEl = document.getElementById("filters");
 
 let todos = loadTodos();
 let editingId = null;
+let filter = "all";
+let search = "";
 
 function loadTodos() {
   try {
@@ -54,11 +58,31 @@ function editTodo(id, text) {
   render();
 }
 
+function visibleTodos() {
+  return todos
+    .filter((t) => {
+      if (filter === "active") return !t.completed;
+      if (filter === "completed") return t.completed;
+      return true;
+    })
+    .filter((t) => t.text.toLowerCase().includes(search.toLowerCase()));
+}
+
 function render() {
   list.innerHTML = "";
-  emptyStateEl.hidden = todos.length !== 0;
+  const visible = visibleTodos();
 
-  for (const todo of todos) {
+  if (todos.length === 0) {
+    emptyStateEl.textContent = "No tasks yet — add your first one above!";
+    emptyStateEl.hidden = false;
+  } else if (visible.length === 0) {
+    emptyStateEl.textContent = "No tasks match your filters.";
+    emptyStateEl.hidden = false;
+  } else {
+    emptyStateEl.hidden = true;
+  }
+
+  for (const todo of visible) {
     const li = document.createElement("li");
     li.className = `todo-item${todo.completed ? " completed" : ""}`;
 
@@ -113,7 +137,7 @@ function render() {
   }
 
   const remaining = todos.filter((t) => !t.completed).length;
-  countEl.textContent = `${remaining} item${remaining === 1 ? "" : "s"} left`;
+  countEl.textContent = `${remaining} task${remaining === 1 ? "" : "s"} left`;
 }
 
 form.addEventListener("submit", (event) => {
@@ -136,6 +160,21 @@ input.addEventListener("input", () => {
     errorEl.textContent = "";
     input.classList.remove("invalid");
   }
+});
+
+searchInput.addEventListener("input", () => {
+  search = searchInput.value;
+  render();
+});
+
+filtersEl.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-filter]");
+  if (!button) return;
+  filter = button.dataset.filter;
+  for (const btn of filtersEl.querySelectorAll("button")) {
+    btn.classList.toggle("active", btn === button);
+  }
+  render();
 });
 
 render();
