@@ -190,13 +190,20 @@ function render() {
           todo.text = trimmed;
           saveTodos();
         }
-        // Patch just this row instead of a full render(): a full render()
-        // here would replace every row's DOM node mid-click if the blur was
-        // caused by mousedown on another row's control (e.g. its checkbox),
-        // which silently drops that click since the browser cancels a
-        // control's default action when its node changes between
-        // mousedown and mouseup.
-        labelEl.replaceWith(createLabelSpan(todo));
+        if (visibleTodos().includes(todo)) {
+          // Patch just this row instead of a full render(): a full render()
+          // here would replace every row's DOM node mid-click if the blur
+          // was caused by mousedown on another row's control (e.g. its
+          // checkbox), which silently drops that click since the browser
+          // cancels a control's default action when its node changes
+          // between mousedown and mouseup.
+          labelEl.replaceWith(createLabelSpan(todo));
+        } else {
+          // The edit no longer matches the active search/filter, so this
+          // row must disappear and the empty-state message may need to
+          // update — that requires a full render().
+          render();
+        }
       });
     } else {
       labelEl = createLabelSpan(todo);
