@@ -141,6 +141,8 @@ function render() {
   for (const todo of visible) {
     const li = document.createElement("li");
     li.className = `todo-item${todo.completed ? " completed" : ""}`;
+    li.dataset.id = todo.id;
+    li.tabIndex = 0;
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
@@ -243,6 +245,24 @@ importInput.addEventListener("change", () => {
   const file = importInput.files[0];
   if (file) importTodos(file);
   importInput.value = "";
+});
+
+list.addEventListener("keydown", (event) => {
+  const li = event.target;
+  if (!li.classList || !li.classList.contains("todo-item")) return;
+
+  if (event.key === "Delete") {
+    event.preventDefault();
+    deleteTodo(li.dataset.id);
+  } else if (event.key === "ArrowDown") {
+    event.preventDefault();
+    const next = li.nextElementSibling;
+    if (next) next.focus();
+  } else if (event.key === "ArrowUp") {
+    event.preventDefault();
+    const prev = li.previousElementSibling;
+    if (prev) prev.focus();
+  }
 });
 
 applyTheme(currentTheme());
