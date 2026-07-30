@@ -52,6 +52,13 @@
     <p id="empty-state" class="empty-state">No tasks yet — add your first one above!</p>
 
     <p id="todo-count" class="count"></p>
+
+    <div class="data-actions">
+      <button type="button" id="export-btn">Export</button>
+      <label class="import-label" for="import-input">Import</label>
+      <input type="file" id="import-input" accept="application/json" hidden />
+    </div>
+    <p id="data-message" class="data-message" role="status"></p>
   </main>
 
   <script src="script.js"></script>

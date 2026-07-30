@@ -10,6 +10,9 @@ const emptyStateEl = document.getElementById("empty-state");
 const searchInput = document.getElementById("search-input");
 const filtersEl = document.getElementById("filters");
 const themeToggle = document.getElementById("theme-toggle");
+const exportBtn = document.getElementById("export-btn");
+const importInput = document.getElementById("import-input");
+const dataMessageEl = document.getElementById("data-message");
 
 let todos = loadTodos();
 let editingId = null;
@@ -68,6 +71,47 @@ function editTodo(id, text) {
   if (todo) todo.text = trimmed;
   saveTodos();
   render();
+}
+
+function exportTodos() {
+  const blob = new Blob([JSON.stringify(todos, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const date = new Date().toISOString().slice(0, 10);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `todos-export-${date}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function isValidTodoArray(data) {
+  return (
+    Array.isArray(data) &&
+    data.every(
+      (t) =>
+        t &&
+        typeof t.id === "string" &&
+        typeof t.text === "string" &&
+        typeof t.completed === "boolean"
+    )
+  );
+}
+
+function importTodos(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (!isValidTodoArray(data)) throw new Error("invalid shape");
+      todos = data;
+      saveTodos();
+      render();
+      dataMessageEl.textContent = `Imported ${data.length} task${data.length === 1 ? "" : "s"}.`;
+    } catch {
+      dataMessageEl.textContent = "That file isn't a valid todo export.";
+    }
+  };
+  reader.readAsText(file);
 }
 
 function visibleTodos() {
@@ -191,6 +235,14 @@ filtersEl.addEventListener("click", (event) => {
 
 themeToggle.addEventListener("click", () => {
   applyTheme(currentTheme() === "dark" ? "light" : "dark");
+});
+
+exportBtn.addEventListener("click", exportTodos);
+
+importInput.addEventListener("change", () => {
+  const file = importInput.files[0];
+  if (file) importTodos(file);
+  importInput.value = "";
 });
 
 applyTheme(currentTheme());
