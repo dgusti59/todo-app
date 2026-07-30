@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo</title>
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    (function () {
+      var theme = localStorage.getItem("todo-app.theme");
+      if (theme === "dark" || theme === "light") {
+        document.documentElement.setAttribute("data-theme", theme);
+      }
+    })();
+  </script>
+</head>
+<body>
+  <main class="app">
+    <div class="app-header">
+      <h1>Todo</h1>
+      <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+    </div>
+
+    <form id="todo-form" class="todo-form">
+      <label for="todo-input" class="visually-hidden">New task</label>
+      <input
+        id="todo-input"
+        type="text"
+        placeholder="What needs doing?"
+        autocomplete="off"
+        aria-describedby="todo-error"
+      />
+      <button type="submit">Add</button>
+    </form>
+    <p id="todo-error" class="error" role="alert"></p>
+
+    <div class="controls">
+      <label for="search-input" class="visually-hidden">Search tasks</label>
+      <input
+        id="search-input"
+        type="search"
+        class="search-input"
+        placeholder="Search tasks…"
+        autocomplete="off"
+      />
+      <div class="filters" id="filters">
+        <button type="button" data-filter="all" class="active" aria-pressed="true">All</button>
+        <button type="button" data-filter="active" aria-pressed="false">Active</button>
+        <button type="button" data-filter="completed" aria-pressed="false">Completed</button>
+      </div>
+    </div>
+
+    <ul id="todo-list" class="todo-list"></ul>
+    <p id="empty-state" class="empty-state">No tasks yet — add your first one above!</p>
+
+    <p id="todo-count" class="count"></p>
+
+    <div class="data-actions">
+      <button type="button" id="export-btn">Export</button>
+      <label class="import-label" for="import-input">Import</label>
+      <input type="file" id="import-input" accept="application/json" hidden />
+    </div>
+    <p id="data-message" class="data-message" role="status"></p>
+
+    <p class="hint">
+      Tip: click a task to focus it, then use ↑/↓ to move and Delete to remove it.
+      Double-click text to edit — Enter saves, Esc cancels.
+    </p>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
