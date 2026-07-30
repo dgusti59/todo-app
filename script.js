@@ -4,6 +4,8 @@ const form = document.getElementById("todo-form");
 const input = document.getElementById("todo-input");
 const list = document.getElementById("todo-list");
 const countEl = document.getElementById("todo-count");
+const errorEl = document.getElementById("todo-error");
+const emptyStateEl = document.getElementById("empty-state");
 
 let todos = loadTodos();
 
@@ -44,6 +46,7 @@ function deleteTodo(id) {
 
 function render() {
   list.innerHTML = "";
+  emptyStateEl.hidden = todos.length !== 0;
 
   for (const todo of todos) {
     const li = document.createElement("li");
@@ -74,9 +77,23 @@ function render() {
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   const text = input.value.trim();
-  if (!text) return;
+  if (!text) {
+    errorEl.textContent = "Type something before adding a task.";
+    input.classList.add("invalid");
+    input.focus();
+    return;
+  }
+  errorEl.textContent = "";
+  input.classList.remove("invalid");
   addTodo(text);
   input.value = "";
+});
+
+input.addEventListener("input", () => {
+  if (errorEl.textContent) {
+    errorEl.textContent = "";
+    input.classList.remove("invalid");
+  }
 });
 
 render();

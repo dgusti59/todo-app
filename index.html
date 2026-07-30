@@ -16,11 +16,14 @@
         type="text"
         placeholder="What needs doing?"
         autocomplete="off"
+        aria-describedby="todo-error"
       />
       <button type="submit">Add</button>
     </form>
+    <p id="todo-error" class="error" role="alert"></p>
 
     <ul id="todo-list" class="todo-list"></ul>
+    <p id="empty-state" class="empty-state">No tasks yet — add your first one above!</p>
 
     <p id="todo-count" class="count"></p>
   </main>
