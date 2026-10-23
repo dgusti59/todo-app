@@ -39,3 +39,9 @@ Rendering is delegated/event-driven rather than using individual per-item listen
 - `main` holds the deployable state (what GitHub Pages serves). Feature work happens on branches (e.g. `feature/todo-app-mvp`), merged via reviewed pull requests — don't commit feature work directly to `main`.
 - Commit messages must be specific about what changed and why, never generic ("update", "fix stuff").
 - Before merging, get an independent review from a reviewer with no prior context on the change (a fresh session/agent, not the one that wrote the diff).
+
+## Session status
+
+`NEXT.md` is this project's status file. Read it before starting work, and update it
+whenever a step completes, blocks, or changes — not only at session end. Older
+sessions move to `HISTORY.md`, which is not auto-read. Use `/next` to read or update it.
